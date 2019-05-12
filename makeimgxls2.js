@@ -34,22 +34,14 @@
   var xl = new ActiveXObject('Excel.Application')
   try {
     var book = xl.Workbooks.Open(xlsfile)
-    var sheet = book.Worksheets.Add
     var interval = 0
     var wiaImgFile = null
     
     for (var ii = 0, max = files.length; ii < max; ++ii) {
-
+      var sheet = book.Worksheets.Add
       var regex = '/(\:|\\|/|\?|\*|\[|\]| |　)/g';
       sheet.Name = files[ii].Name.replace(regex, '').substr(0, 31);
-
-	    if (ii > 0) {
-        wiaImgFile = new ActiveXObject('WIA.ImageFile')
-      	wiaImgFile.LoadFile(files[ii - 1].Path)
-        interval += (Math.ceil(wiaImgFile.Height / cellheight))
-        wiaImgFile = null
-	    }
-     
+  
 	    wiaImgFile = new ActiveXObject('WIA.ImageFile')
 	    wiaImgFile.LoadFile(files[ii].Path)
       var img = sheet.Shapes.AddPicture(files[ii].Path, true, true, 0, 0, wiaImgFile.Width, wiaImgFile.Height)
@@ -57,11 +49,8 @@
 
 	    img.Cut()
       sheet.Cells(interval + 1, 1).Value = files[ii].Name
-	    sheet.Paste(sheet.Cells(interval + 2, 1), img)
-
-	    if (ii == 0) {
-		    interval += 1
-	    }
+      sheet.Paste(sheet.Cells(interval + 2, 1), img)
+      
 	    wiaImgFile = null
     }
 
